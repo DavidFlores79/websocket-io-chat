@@ -17,6 +17,7 @@ const login = async(req, res = response) => {
         const usuario = await Usuario.findOne({ correo });
         if ( !usuario ) {
             return res.status(400).json({
+                ok: false,
                 msg: 'Usuario / Password no son correctos - correo'
             });
         }
@@ -24,6 +25,7 @@ const login = async(req, res = response) => {
         // SI el usuario está activo
         if ( !usuario.estado ) {
             return res.status(400).json({
+                ok: false,
                 msg: 'Usuario / Password no son correctos - estado: false'
             });
         }
@@ -32,6 +34,7 @@ const login = async(req, res = response) => {
         const validPassword = bcryptjs.compareSync( password, usuario.password );
         if ( !validPassword ) {
             return res.status(400).json({
+                ok: false,
                 msg: 'Usuario / Password no son correctos - password'
             });
         }
@@ -40,6 +43,7 @@ const login = async(req, res = response) => {
         const token = await generarJWT( usuario.id );
 
         res.json({
+            ok: true,
             usuario,
             token
         })
@@ -95,6 +99,7 @@ const googleSignin = async(req, res = response) => {
     } catch (error) {
 
         res.status(400).json({
+            ok: false,
             msg: 'Token de Google no es válido'
         })
 
@@ -104,9 +109,23 @@ const googleSignin = async(req, res = response) => {
 
 }
 
+const renovarToken = async(req, res = response) => {
+
+    const { usuario } = req
+
+        // Generar el JWT
+        const token = await generarJWT( usuario.id );
+        
+        res.json({
+            usuario,
+            token
+        });
+}
+
 
 
 module.exports = {
     login,
-    googleSignin
+    googleSignin,
+    renovarToken
 }

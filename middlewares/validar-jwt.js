@@ -49,8 +49,36 @@ const validarJWT = async( req = request, res = response, next ) => {
 }
 
 
+const comprobarJWT = async (token = null) => {
+
+    if ( !token ) {
+        return null
+    }
+
+    try {
+        
+        const { uid } = jwt.verify( token, process.env.SECRETORPRIVATEKEY );
+
+        // leer el usuario que corresponde al uid y Verificar si el uid tiene estado true
+        const usuario = await Usuario.findById( uid );
+
+        if( !usuario || !usuario.estado ) {
+            return null
+        }
+
+        return usuario;
+
+    } catch (error) {
+        console.log(error);
+        return null
+    }
+
+}
+
+
 
 
 module.exports = {
-    validarJWT
+    validarJWT,
+    comprobarJWT
 }

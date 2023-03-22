@@ -1,0 +1,7 @@
+.navbar-expand-md .navbar-nav .dropdown-menu {
+  position: absolute !important;
+}
+
+.user-avatar {
+  border-radius: 50%;
+}
